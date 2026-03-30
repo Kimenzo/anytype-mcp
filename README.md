@@ -1,184 +1,134 @@
-# Anytype MCP Server
+# Bento MCP Server
 
-<a href="https://npmjs.org/package/@anyproto/anytype-mcp"><img src="https://img.shields.io/npm/v/@anyproto/anytype-mcp.svg" alt="NPM version" height="20" /></a>
-<a href="https://cursor.com/en-US/install-mcp?name=anytype&config=eyJlbnYiOnsiT1BFTkFQSV9NQ1BfSEVBREVSUyI6IntcIkF1dGhvcml6YXRpb25cIjpcIkJlYXJlciA8WU9VUl9BUElfS0VZPlwiLCBcIkFueXR5cGUtVmVyc2lvblwiOlwiMjAyNS0xMS0wOFwifSJ9LCJjb21tYW5kIjoibnB4IC15IEBhbnlwcm90by9hbnl0eXBlLW1jcCJ9"><img src="https://cursor.com/deeplink/mcp-install-dark.svg" alt="Add anytype MCP server to Cursor" height="20" /></a>
-<a href="https://lmstudio.ai/install-mcp?name=anytype&config=eyJjb21tYW5kIjoibnB4IiwiYXJncyI6WyIteSIsIkBhbnlwcm90by9hbnl0eXBlLW1jcCJdLCJlbnYiOnsiT1BFTkFQSV9NQ1BfSEVBREVSUyI6IntcIkF1dGhvcml6YXRpb25cIjpcIkJlYXJlciA8WU9VUl9BUElfS0VZPlwiLCBcIkFueXR5cGUtVmVyc2lvblwiOlwiMjAyNS0xMS0wOFwifSJ9fQ%3D%3D"><img src="https://files.lmstudio.ai/deeplink/mcp-install-light.svg" alt="Add MCP Server anytype to LM Studio" height="20" /></a>
+`@kimenzo/bento-mcp` is the Bento MCP server for the local Bento desktop API.
 
-The Anytype MCP Server is a [Model Context Protocol (MCP)](https://modelcontextprotocol.io) server enabling AI assistants to seamlessly interact with [Anytype's API](https://github.com/anyproto/anytype-api) through natural language.
+It turns Bento's OpenAPI surface into MCP tools so Claude, Cursor, LM Studio, and other MCP clients can search spaces, create objects, manage templates, and operate on Bento data through natural language.
 
-It bridges the gap between AI and Anytype's powerful features by converting Anytype's OpenAPI specification into MCP tools, allowing you to manage your knowledge base through conversation.
+The package is MIT-licensed and is maintained in this fork:
 
-## Features
-
-- Global & Space Search
-- Spaces & Members
-- Objects & Lists
-- Properties & Tags
-- Types & Templates
+- Repository: `https://github.com/Kimenzo/anytype-mcp`
+- npm package: `@kimenzo/bento-mcp`
 
 ## Quick Start
 
-### 1. Get Your API Key
+### 1. Create an API key in Bento
 
-1. Open Anytype
-2. Go to App Settings
-3. Navigate to API Keys section
-4. Click on `Create new` button
+1. Open Bento Desktop.
+2. Go to `Settings`.
+3. Open `API Keys`.
+4. Create a new key.
 
-<details>
-<summary>Alternative: Get API key via CLI</summary>
-
-You can also get your API key using the command line:
+You can also generate a ready-to-copy config snippet from the CLI:
 
 ```bash
-npx -y @anyproto/anytype-mcp get-key
+npx -y @kimenzo/bento-mcp get-key
 ```
 
-</details>
+### 2. Configure your MCP client
 
-### 2. Configure Your MCP Client
-
-#### Claude Desktop, Cursor, Windsurf, Raycast, etc.
-
-Add the following configuration to your MCP client settings after replacing `<YOUR_API_KEY>` with your actual API key:
+Use this snippet in Claude Desktop, Cursor, Windsurf, Raycast, or any MCP-compatible client:
 
 ```json
 {
   "mcpServers": {
-    "anytype": {
+    "bento": {
       "command": "npx",
-      "args": ["-y", "@anyproto/anytype-mcp"],
+      "args": ["-y", "@kimenzo/bento-mcp"],
       "env": {
-        "OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer <YOUR_API_KEY>\", \"Anytype-Version\":\"2025-11-08\"}"
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer <YOUR_API_KEY>\", \"Bento-Version\":\"2025-11-08\"}"
       }
     }
   }
 }
 ```
 
-> **Tip:** After creating an API key in Anytype, you can copy that ready-to-use configuration snippet with your API key already filled in from the API Keys section.
+The server will translate `Bento-Version` to the legacy `Anytype-Version` header automatically when talking to the current backend, so Bento branding and backend compatibility can coexist during migration.
 
-#### Claude Code (CLI)
-
-Run this command to add the Anytype MCP server after replacing `<YOUR_API_KEY>` with your actual API key:
+### Claude Code
 
 ```bash
-claude mcp add anytype -e OPENAPI_MCP_HEADERS='{"Authorization":"Bearer <YOUR_API_KEY>", "Anytype-Version":"2025-11-08"}' -s user -- npx -y @anyproto/anytype-mcp
+claude mcp add bento \
+  -e OPENAPI_MCP_HEADERS='{"Authorization":"Bearer <YOUR_API_KEY>", "Bento-Version":"2025-11-08"}' \
+  -s user -- npx -y @kimenzo/bento-mcp
 ```
 
-<details>
-<summary>Alternative: Global Installation</summary>
-
-If you prefer to install the package globally:
-
-1. Install the package:
+### Global install
 
 ```bash
-npm install -g @anyproto/anytype-mcp
+npm install -g @kimenzo/bento-mcp
 ```
 
-2. Update your MCP client configuration to use the global installation:
+Then point your MCP client at `bento-mcp`.
+
+## Custom API Base URL
+
+By default, the server connects to `http://127.0.0.1:31009`.
+
+Preferred override:
+
+- `BENTO_API_BASE_URL`
+
+Legacy compatibility fallback:
+
+- `ANYTYPE_API_BASE_URL`
+
+Example:
 
 ```json
 {
   "mcpServers": {
-    "anytype": {
-      "command": "anytype-mcp",
-      "env": {
-        "OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer <YOUR_API_KEY>\", \"Anytype-Version\":\"2025-11-08\"}"
-      }
-    }
-  }
-}
-```
-
-</details>
-
-### Custom API Base URL
-
-By default, the server connects to `http://127.0.0.1:31009`. For `anytype-cli` (port `31012`) or other custom base URLs, set `ANYTYPE_API_BASE_URL`:
-
-<details>
-<summary>Example Configuration</summary>
-
-**MCP Client (Claude Desktop, Cursor, etc.):**
-```json
-{
-  "mcpServers": {
-    "anytype": {
+    "bento": {
       "command": "npx",
-      "args": ["-y", "@anyproto/anytype-mcp"],
+      "args": ["-y", "@kimenzo/bento-mcp"],
       "env": {
-        "ANYTYPE_API_BASE_URL": "http://localhost:31012",
-        "OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer <YOUR_API_KEY>\", \"Anytype-Version\":\"2025-11-08\"}"
+        "BENTO_API_BASE_URL": "http://localhost:31012",
+        "OPENAPI_MCP_HEADERS": "{\"Authorization\":\"Bearer <YOUR_API_KEY>\", \"Bento-Version\":\"2025-11-08\"}"
       }
     }
   }
 }
 ```
-
-**Claude Code (CLI):**
-```bash
-claude mcp add anytype \
-  -e ANYTYPE_API_BASE_URL='http://localhost:31012' \
-  -e OPENAPI_MCP_HEADERS='{"Authorization":"Bearer <YOUR_API_KEY>", "Anytype-Version":"2025-11-08"}' \
-  -s user -- npx -y @anyproto/anytype-mcp
-```
-
-</details>
-
-## Example Interactions
-
-Here are some examples of how you can interact with your Anytype:
-
-- "Create a new space called 'Project Ideas' with description 'A space for storing project ideas'"
-- "Add a new object of type 'Task' with title 'Research AI trends' to the 'Project Ideas' space"
-- "Create a second one with title 'Dive deep into LLMs' with due date in 3 days and assign it to me"
-- "Now create a collection with the title "Tasks for this week" and add the two tasks to that list. Set due date of the first one to 10 days from now"
 
 ## Development
 
-### Installation from Source
-
-1. Clone the repository:
+Clone and build locally:
 
 ```bash
-git clone https://github.com/anyproto/anytype-mcp.git
+git clone https://github.com/Kimenzo/anytype-mcp.git
 cd anytype-mcp
-```
-
-2. Install dependencies:
-
-```bash
-npm install -D
-```
-
-3. Build the project:
-
-```bash
+npm install
 npm run build
 ```
 
-4. Link the package globally (optional):
+Useful commands:
 
 ```bash
-npm link
+npm run dev
+npm run test
+npm run typecheck
+npm run lint
+npm run pack:check
 ```
 
-## Contribution
+## Publishing
 
-Thank you for your desire to develop Anytype together!
+The package is already prepared for public npm publishing:
 
-❤️ This project and everyone involved in it is governed by the [Code of Conduct](https://github.com/anyproto/.github/blob/main/docs/CODE_OF_CONDUCT.md).
+- package name: `@kimenzo/bento-mcp`
+- public access enabled through `publishConfig.access`
+- `prepublishOnly` runs build, tests, and typecheck before publish
 
-🧑‍💻 Check out our [contributing guide](https://github.com/anyproto/.github/blob/main/docs/CONTRIBUTING.md) to learn about asking questions, creating issues, or submitting pull requests.
+Publish flow:
 
-🫢 For security findings, please email [security@anytype.io](mailto:security@anytype.io) and refer to our [security guide](https://github.com/anyproto/.github/blob/main/docs/SECURITY.md) for more information.
+```bash
+npm login
+npm run pack:check
+npm publish --access public
+```
 
-🤝 Follow us on [Github](https://github.com/anyproto) and join the [Contributors Community](https://github.com/orgs/anyproto/discussions).
+## Notes
 
----
-
-Made by Any — a Swiss association 🇨🇭
+- The package ships both `bento-mcp` and `anytype-mcp` CLI bin aliases for transition safety.
+- The runtime is Bento-branded, but still preserves current backend compatibility where the API surface still exposes `Anytype-Version`.
 
 Licensed under [MIT](./LICENSE.md).

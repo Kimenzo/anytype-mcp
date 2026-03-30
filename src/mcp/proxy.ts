@@ -135,11 +135,26 @@ export class MCPProxy {
         console.warn("OPENAPI_MCP_HEADERS environment variable must be a JSON object, got:", typeof headers);
         return {};
       }
-      return headers;
+      return this.normalizeHeaders(headers as Record<string, string>);
     } catch (error) {
       console.warn("Failed to parse OPENAPI_MCP_HEADERS environment variable:", error);
       return {};
     }
+  }
+
+  private normalizeHeaders(headers: Record<string, string>): Record<string, string> {
+    const normalized = { ...headers };
+    const bentoVersion = normalized["Bento-Version"];
+    const anytypeVersion = normalized["Anytype-Version"];
+
+    if (bentoVersion && !anytypeVersion) {
+      normalized["Anytype-Version"] = bentoVersion;
+    }
+    if (anytypeVersion && !bentoVersion) {
+      normalized["Bento-Version"] = anytypeVersion;
+    }
+
+    return normalized;
   }
 
   private getContentType(headers: Headers): "text" | "image" | "binary" {

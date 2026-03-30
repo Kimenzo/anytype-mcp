@@ -432,8 +432,8 @@ export class OpenAPIToMCPConverter {
       for (const param of operation.parameters) {
         const paramObj = this.resolveParameter(param);
         if (paramObj && paramObj.schema) {
-          // do not include Anytype-Version in the input schema, it's set in http client header by proxy
-          if (paramObj.name === "Anytype-Version") {
+          // do not include version headers in the input schema, they're injected by the proxy
+          if (paramObj.name === "Anytype-Version" || paramObj.name === "Bento-Version") {
             continue;
           }
           const paramSchema = this.convertOpenApiSchemaToJsonSchema(paramObj.schema, new Set());
@@ -557,8 +557,8 @@ export class OpenAPIToMCPConverter {
       for (const param of operation.parameters) {
         const paramObj = this.resolveParameter(param);
         if (paramObj && paramObj.schema) {
-          // do not include Anytype-Version in the input schema, it's set in http client header by proxy
-          if (paramObj.name === "Anytype-Version") {
+          // do not include version headers in the input schema, they're injected by the proxy
+          if (paramObj.name === "Anytype-Version" || paramObj.name === "Bento-Version") {
             continue;
           }
           const schema = this.convertOpenApiSchemaToJsonSchema(paramObj.schema, new Set(), true);

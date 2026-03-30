@@ -106,7 +106,7 @@
             "type": "string"
           },
           "code": {
-            "description": "The 4-digit code retrieved from Anytype Desktop app",
+            "description": "The 4-digit code retrieved from Bento Desktop app",
             "example": "1234",
             "type": "string"
           }
@@ -127,7 +127,7 @@
         "properties": {
           "app_name": {
             "description": "The name of the app that is requesting the challenge",
-            "example": "anytype_mcp",
+            "example": "bento_mcp",
             "type": "string"
           }
         },
@@ -3032,17 +3032,17 @@
   },
   "info": {
     "contact": {
-      "email": "support@anytype.io",
+      "email": "support@aetherix.app",
       "name": "Anytype Support",
-      "url": "https://anytype.io/contact"
+      "url": "https://aetherix.app/contact"
     },
     "description": "This API enables seamless interaction with Anytype's resources - spaces, objects, properties, types, templates, and beyond.",
     "license": {
       "name": "Any Source Available License 1.0",
-      "url": "https://github.com/anyproto/anytype-api/blob/main/LICENSE.md"
+      "url": "https://github.com/Kimenzo/Bento/blob/main/anytype-ts/LICENSE.md"
     },
-    "termsOfService": "https://anytype.io/terms_of_use",
-    "title": "Anytype API",
+    "termsOfService": "https://aetherix.app/terms_of_use",
+    "title": "Bento API",
     "version": "2025-11-08"
   },
   "externalDocs": {

@@ -1,7 +1,9 @@
 {
-  "name": "@anyproto/anytype-mcp",
-  "mcpName": "io.github.anyproto/anytype-mcp",
+  "name": "@kimenzo/bento-mcp",
+  "mcpName": "io.github.kimenzo/bento-mcp",
   "keywords": [
+    "bento",
+    "aetherix",
     "anytype",
     "api",
     "mcp",
@@ -13,17 +15,35 @@
   "scripts": {
     "test": "vitest run",
     "test:dev": "vitest watch",
-    "build": "tsc -build && node scripts/build-cli.js",
+    "build": "node -e \"require('fs').rmSync('build', { recursive: true, force: true })\" && tsc -p tsconfig.build.json && node scripts/build-cli.js",
     "dev": "tsx watch scripts/start-server.ts",
     "parse-openapi": "tsx scripts/parse-openapi.ts",
     "lint": "eslint \"src/**/*.ts\" \"scripts/**/*.ts\"",
     "lint:fix": "eslint --fix \"src/**/*.ts\" \"scripts/**/*.ts\"",
     "format": "prettier --write \"src/**/*.ts\" \"scripts/**/*.ts\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "pack:check": "npm pack --dry-run",
+    "prepublishOnly": "npm run build && npm run test && npm run typecheck"
+  },
+  "main": "./build/src/index.js",
+  "types": "./build/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/src/index.d.ts",
+      "default": "./build/src/index.js"
+    },
+    "./package.json": "./package.json"
   },
   "bin": {
+    "bento-mcp": "bin/cli.mjs",
     "anytype-mcp": "bin/cli.mjs"
   },
+  "files": [
+    "bin/cli.mjs",
+    "build/src",
+    "LICENSE.md",
+    "README.md"
+  ],
   "dependencies": {
     "@modelcontextprotocol/sdk": "1.27.1",
     "axios": "1.13.6",
@@ -54,14 +74,20 @@
     "typescript": "5.9.3",
     "vitest": "4.1.0"
   },
-  "description": "Official MCP server for Anytype API",
+  "description": "Official MCP server for Bento API",
   "repository": {
     "type": "git",
-    "url": "https://github.com/anyproto/anytype-mcp.git"
+    "url": "git+https://github.com/Kimenzo/anytype-mcp.git"
   },
-  "author": "@anyproto",
+  "author": "Kimenzo",
   "bugs": {
-    "url": "https://github.com/anyproto/anytype-mcp/issues"
+    "url": "https://github.com/Kimenzo/anytype-mcp/issues"
   },
-  "homepage": "https://github.com/anyproto/anytype-mcp#readme"
+  "homepage": "https://github.com/Kimenzo/anytype-mcp#readme",
+  "publishConfig": {
+    "access": "public"
+  },
+  "engines": {
+    "node": ">=18"
+  }
 }

@@ -1,0 +1,4 @@
+# Publishing is controlled via the "files" field in package.json.
+# Keep this file so npm does not inherit .gitignore rules that exclude bin/dist/build.
+build/src/**/__tests__/
+build/src/**/*.map

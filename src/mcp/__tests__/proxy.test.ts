@@ -162,6 +162,19 @@ describe("MCPProxy", () => {
       expectHeaders({ Authorization: "Bearer token123", "X-Custom-Header": "test" });
     });
 
+    it("should mirror Bento-Version to Anytype-Version for backend compatibility", () => {
+      process.env.OPENAPI_MCP_HEADERS = JSON.stringify({
+        Authorization: "Bearer token123",
+        "Bento-Version": "2025-11-08",
+      });
+      new MCPProxy("test-proxy", mockOpenApiSpec);
+      expectHeaders({
+        Authorization: "Bearer token123",
+        "Bento-Version": "2025-11-08",
+        "Anytype-Version": "2025-11-08",
+      });
+    });
+
     it("should return empty object when env var is not set", () => {
       delete process.env.OPENAPI_MCP_HEADERS;
       new MCPProxy("test-proxy", mockOpenApiSpec);
@@ -205,19 +218,21 @@ describe("MCPProxy", () => {
       process.env = originalEnv;
     });
 
-    it("should use ANYTYPE_API_BASE_URL when set", () => {
-      process.env.ANYTYPE_API_BASE_URL = "http://localhost:31012";
+    it("should use BENTO_API_BASE_URL when set", () => {
+      process.env.BENTO_API_BASE_URL = "http://localhost:31012";
       new MCPProxy("test-proxy", mockOpenApiSpec);
       expectBaseUrl("http://localhost:31012");
     });
 
     it("should use spec servers when env var not set", () => {
+      delete process.env.BENTO_API_BASE_URL;
       delete process.env.ANYTYPE_API_BASE_URL;
       new MCPProxy("test-proxy", mockOpenApiSpec);
       expectBaseUrl("http://localhost:3000");
     });
 
     it("should use default when neither env var nor spec servers available", () => {
+      delete process.env.BENTO_API_BASE_URL;
       delete process.env.ANYTYPE_API_BASE_URL;
       new MCPProxy("test-proxy", createMockOpenApiSpec({ servers: undefined }));
       expectBaseUrl("http://127.0.0.1:31009");

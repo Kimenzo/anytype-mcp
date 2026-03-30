@@ -23,7 +23,7 @@ export async function loadOpenApiSpec(specPath?: string): Promise<OpenAPIV3.Docu
       rawSpec = typeof response.data === "string" ? response.data : JSON.stringify(response.data);
     } catch (error: any) {
       if (error.code === "ECONNREFUSED") {
-        console.error("Can't connect to API. Please ensure Anytype is running and reachable.");
+        console.error("Can't connect to API. Please ensure Bento is running and reachable.");
         process.exit(1);
       }
       console.error("Failed to fetch OpenAPI specification from URL:", error.message);
@@ -48,10 +48,10 @@ export async function loadOpenApiSpec(specPath?: string): Promise<OpenAPIV3.Docu
 }
 
 export async function initProxy(specPath: string) {
-  console.error("Initializing Anytype MCP Server...");
+  console.error("Initializing Bento MCP Server...");
   const openApiSpec = await loadOpenApiSpec(specPath);
-  const proxy = new MCPProxy("Anytype API", openApiSpec);
+  const proxy = new MCPProxy("Bento API", openApiSpec);
 
   await proxy.connect(new StdioServerTransport());
-  console.error("Anytype MCP Server running on stdio");
+  console.error("Bento MCP Server running on stdio");
 }
